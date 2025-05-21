@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>茶叶嫩梢分级识别系统</title>
+    <style>
+        /* 基础样式 */
+        body { font-family: "Microsoft YaHei", sans-serif; font-size: 16px; font-weight: 400; line-height: 30px; background-color: #360; margin: 0; padding: 0; color: #333; }
+        .all { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .logo { display: flex; justify-content: center; align-items: center; padding: 20px 0; color: white; }
+        .导航 { background-color: #330; margin: 10px 0; border-radius: 5px; }
+        .导航 ul { margin: 0; padding: 0; list-style: none; text-align: center; }
+        .导航 li { line-height: 50px; display: inline-block; padding: 0 30px; }
+        .导航 a { color: #FFFFFF; text-decoration: none; transition: color 0.3s; }
+        .导航 a:hover { color: #ffcc99; }
+        /* 首页特有样式 */
+        .hero { background-size: cover; background-position: center; height: 500px; display: flex; align-items: center; justify-content: center; text-align: center; color: white; border-radius: 8px; margin: 30px 0; position: relative; }
+        .hero-content { max-width: 800px; padding: 0 20px; }
+        .hero h1 { font-family: "隶书", cursive; font-size: 48px; margin-bottom: 20px; color: #ffcc99; }
+        .hero p { font-size: 20px; margin-bottom: 40px; }
+        .hero-text { color: #ffcc99; font-size: 22px; font-family: "隶书", cursive; text-decoration: underline; cursor: pointer; }
+        .section { background-color: white; padding: 60px 0; border-radius: 8px; margin: 30px 0; }
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { font-family: "隶书", cursive; font-size: 36px; color: #900; margin-bottom: 10px; }
+        .section-title p { color: #666; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 0 20px; }
+        .feature-card { background-color: #f9f9f9; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s; text-align: center; }
+        .feature-card:hover { transform: translateY(-10px); }
+        .feature-icon { font-size: 48px; color: #900; margin-bottom: 20px; }
+        .feature-card h3 { font-size: 24px; margin-bottom: 15px; color: #330; }
+        .showcase { padding: 0 20px; }
+        .showcase-slider { display: flex; overflow-x: auto; gap: 20px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #900 #f1f1f1; }
+        .showcase-slider::-webkit-scrollbar { height: 8px; }
+        .showcase-slider::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .showcase-slider::-webkit-scrollbar-thumb { background-color: #900; border-radius: 4px; }
+        .showcase-item { min-width: 300px; background-color: #f9f9f9; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .showcase-item img { width: 100%; height: 200px; object-fit: cover; }
+        .showcase-content { padding: 20px; }
+        .showcase-content h3 { font-size: 20px; margin-bottom: 10px; color: #330; }
+        .tea-type { font-family: "隶书", cursive; font-size: 24px; color: #900; margin-bottom: 10px; }
+        .process { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; padding: 0 20px; text-align: center; }
+        .process-step { position: relative; }
+        .process-icon { width: 80px; height: 80px; background-color: #900; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; }
+        .process-step h3 { font-size: 20px; margin-bottom: 10px; color: #330; }
+        .process-step:not(:last-child)::after { content: ""; position: absolute; top: 40px; right: -15px; width: 30px; height: 2px; background-color: #900; }
+        .cta { background-color: #330; color: white; text-align: center; padding: 60px 20px; border-radius: 8px; margin: 30px 0; }
+        .cta h2 { font-family: "隶书", cursive; font-size: 36px; margin-bottom: 20px; }
+        .cta-btn { background-color: #900; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-size: 18px; font-family: "隶书", cursive; transition: background-color 0.3s; display: inline-block; margin-top: 20px; }
+        .cta-btn:hover { background-color: #cc3300; }
+        /* 移动端适配 */
+        @media (max-width: 768px) { .导航 li { padding: 0 15px; } .hero h1 { font-size: 36px; } .hero p { font-size: 16px; } .process-step:not(:last-child)::after { display: none; } .showcase-slider { justify-content: flex-start; } }
+    </style>
+</head>
+<body>
+    <div class="all">
+        <!-- 导航栏 -->
+        <div class="logo">
+            <h1>茶叶嫩梢分级识别系统</h1>
+        </div>
+        <div class="导航">
+            <ul>
+                <li><a href="/">网站首页</a></li>
+                <li><a href="/shiqishibie">茶叶时期识别</a></li>
+                <li><a href="/zhongleishibie">茶叶种类识别</a></li>
+                <li><a href="/xingtaishibie">特定形态识别</a></li>
+                {% if 'user_id' in session %}
+                <li><a href="/usage_records">使用记录</a></li>
+                <li><a href="/logout">退出登录</a></li>
+                {% else %}
+                <li><a href="/auth">注册登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <!-- 英雄区域 -->
+        <div class="hero" style="background: linear-gradient(rgba(51, 102, 0, 0.8), rgba(51, 51, 0, 0.7)), url('{{ url_for('static', filename='images/tea_background.jpg') }}');">
+            <div class="hero-content">
+                <h1>茶叶嫩梢识别系统</h1>
+                <p>基于先进AI技术，精准识别茶叶嫩梢等级和种类</p>
+                <span class="hero-text">立即开始使用吧！</span>
+            </div>
+        </div>
+        <!-- 功能介绍 -->
+        <div class="section">
+            <div class="section-title">
+                <h2>系统功能</h2>
+                <p>我们的系统提供全面的茶叶嫩梢识别解决方案</p>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>嫩梢等级识别</h3>
+                    <p>基于AI视觉技术，自动识别茶叶嫩梢的等级，提供精准分类</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>种类鉴别</h3>
+                    <p>准确区分不同种类的茶叶嫩梢，为茶叶生产提供科学依据</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h3>时期判断</h3>
+                    <p>识别茶叶生长时期，帮助茶农把握最佳采摘时间</p>
+                </div>
+            </div>
+        </div>
+        <!-- 识别示例（包含六个模块） -->
+        <div class="section">
+            <div class="section-title">
+                <h2>识别示例</h2>
+                <p>查看我们系统的实际识别效果</p>
+            </div>
+            <div class="showcase">
+                <div class="showcase-slider">
+                    <!-- 一级嫩梢 -->
+                    <div class="showcase-item">
+                        <img src="{{ url_for('static', filename='images/单芽.jpg') }}" alt="一级嫩梢示例">
+                        <div class="showcase-content">
+                            <h3>一级嫩梢</h3>
+                            <p>完整的顶芽和一片未展开的嫩叶，芽叶长度适中</p>
+                        </div>
+                    </div>
+                    <!-- 二级嫩梢 -->
+                    <div class="showcase-item">
+
+                        <img src="{{ url_for('static', filename='images/一芽一叶.jpeg') }}" alt="二级嫩梢示例">
+                        <div class="showcase-content">
+                            <h3>二级嫩梢</h3>
+                            <p>顶芽和一片展开的嫩叶，芽叶形态良好</p>
+                        </div>
+                    </div>
+                    <!-- 三级嫩梢 -->
+                    <div class="showcase-item">
+                        <img src="{{ url_for('static', filename='images/一芽两叶.png') }}" alt="三级嫩梢示例">
+                        <div class="showcase-content">
+                            <h3>三级嫩梢</h3>
+                            <p>顶芽和两片展开的嫩叶，适用于大多数茶叶制作</p>
+                        </div>
+                    </div>
+                    <!-- 绿茶 -->
+                    <div class="showcase-item">
+                        <img src="{{ url_for('static', filename='images/绿茶.jpeg') }}" alt="绿茶示例">
+                        <div class="showcase-content">
+                            <div class="tea-type">绿茶</div>
+                            <p>芽头肥壮，叶质柔软，色泽嫩绿</p>
+                        </div>
+                    </div>
+                    <!-- 红茶 -->
+                    <div class="showcase-item">
+                        <img src="{{ url_for('static', filename='images/红茶.jpeg') }}" alt="红茶示例">
+                        <div class="showcase-content">
+                            <div class="tea-type">红茶</div>
+                            <p>芽叶色泽乌润，毫毛显露，持嫩性强</p>
+                        </div>
+                    </div>
+                    <!-- 白茶 -->
+                    <div class="showcase-item">
+                         <img src="{{ url_for('static', filename='images/白茶.jpg') }}" alt="白茶示例">
+                        <div class="showcase-content">
+                            <div class="tea-type">白茶</div>
+                            <p>芽头肥壮，满披白毫，色泽银绿</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 系统优势 -->
+        <div class="section">
+            <div class="section-title">
+                <h2>系统优势</h2>
+                <p>为什么选择我们的茶叶嫩梢识别系统</p>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>快速识别</h3>
+                    <p>秒级完成茶叶嫩梢识别，提高生产效率</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>高度准确</h3>
+                    <p>基于深度学习模型，识别准确率高达98.7%</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>数据追踪</h3>
+                    <p>记录每一次识别结果，支持历史数据查询</p>
+                </div>
+            </div>
+        </div>
+        <!-- 使用流程 -->
+        <div class="section">
+            <div class="section-title">
+                <h2>使用流程</h2>
+                <p>简单几步，完成茶叶嫩梢识别</p>
+            </div>
+            <div class="process">
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>注册登录</h3>
+                    <p>创建账户并登录系统</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>拍摄上传</h3>
+                    <p>拍摄茶叶嫩梢照片并上传</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>自动识别</h3>
+                    <p>系统自动分析并给出识别结果</p>
+                </div>
+            </div>
+        </div>
+        <!-- 行动召唤 -->
+        <div class="cta">
+            <h2>立即开始使用茶叶嫩梢识别系统</h2>
+            <p>提高茶叶生产的标准化和精细化水平</p>
+            <a href="/auth" class="cta-btn">免费注册账户</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茶叶种类识别</title>
+    <style>
+        .file-btn-group { display: flex; align-items: center; gap: 15px; justify-content: center; margin: 20px 0; }
+        body { font-family: "Microsoft YaHei", sans-serif; font-size: 16px; font-weight: 400; line-height: 30px; background-color: #360; margin: 0; padding: 0; }
+        .all { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .logo { display: flex; justify-content: center; align-items: center; padding: 20px 0; color: white; }
+        .导航 { background-color: #330; margin: 10px 0; border-radius: 5px; }
+        .导航 ul { margin: 0; padding: 0; list-style: none; text-align: center; }
+        .导航 li { line-height: 50px; display: inline-block; padding: 0 30px; }
+        .导航 a { color: #FFFFFF; text-decoration: none; transition: color 0.3s; }
+        .导航 a:hover { color: #ffcc99; }
+        .liuyan { font-family: "宋体", serif; background-color: white; color: #900; padding: 35px 25px 25px; margin: 30px auto; width: 90%; max-width: 1000px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); border-radius: 8px; }
+        .result-box { border: 1px solid #ccc; width: 90%; max-width: 800px; margin: 10px auto; overflow: hidden; height: 430px; background-color: #f9f9f9; display: flex; justify-content: center; align-items: center; border-radius: 5px; }
+        button { width: 120px; height: 45px; background-color: #900; border: none; color: white; margin: 15px 6px; font-size: 18px; font-family: "隶书", cursive; font-weight: bold; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #cc3300; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+        @media (max-width: 768px) { .file-btn-group { flex-direction: column; gap: 15px; } .all { width: 95%; } .导航 li { padding: 0 15px; } .result-box { height: 300px; } }
+    </style>
+</head>
+<body>
+    <div class="all">
+        <div class="logo">
+            <h1>茶叶嫩梢分级识别系统</h1>
+        </div>
+        <div class="导航">
+            <ul>
+                <li><a href="/">网站首页</a></li>
+                <li><a href="/shiqishibie">茶叶时期识别</a></li>
+                <li><a href="/zhongleishibie">茶叶种类识别</a></li>
+                <li><a href="/xingtaishibie">特定形态识别</a></li>
+                <li><a href="/usage_records">使用记录</a></li>
+                <li><a href="/logout">退出登录</a></li>
+            </ul>
+        </div>
+        <div class="liuyan">
+            <span style="color: #990033; font-family: '隶书', cursive; font-size: 24px; font-weight: bold;">茶叶种类识别</span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="file-btn-group">
+                            <input type="file" id="imageInput" accept="image/*">
+                            <input type="hidden" id="recognitionType" name="recognition_type" value="tea_variety">
+                            <button onclick="recognizeTea()" class="custom-btn">识别</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="result-box">
+                            <img id="resultImage" src="" alt="识别结果将显示在这里" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="resultText" style="margin-top: 15px; min-height: 20px; font-family: 'Microsoft YaHei', sans-serif; color: #666; line-height: 1; text-align: center; font-size: 12px;"  >
+                <p>系统提示：若识别结果与实际不符，可能受拍摄角度、茶叶形态复杂度等因素影响。</p>
+                <p>如需进一步帮助，请通过 <a href="/feedback" style="color: #900; text-decoration: underline;">技术支持入口</a> 提交详细信息（如图片、问题描述），我们的工程师将协助分析。</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function recognizeTea() {
+            const imageInput = document.getElementById('imageInput');
+            const resultImg = document.getElementById('resultImage');
+            const recognitionType = document.getElementById('recognitionType').value;
+            if (imageInput.files.length === 0) {
+                alert('请先上传图片！');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+            formData.append('recognition_type', recognitionType);
+            resultImg.src = '';
+            resultImg.alt = '正在识别...';
+            fetch('http://127.0.0.1:5000/recognize', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`识别失败：${response.statusText}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                resultImg.src = url;
+                resultImg.alt = '识别结果图片';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('识别失败，请重试');
+            });
+        }
+    </script>
+</body>
+</html>

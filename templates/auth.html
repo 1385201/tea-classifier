@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户认证</title>
+    <style>
+        body{font-family:Arial,sans-serif;background-color:#360;margin:0;padding:0;}
+        .hero{position:relative;background:linear-gradient(rgba(51,102,0,0.8),rgba(51,51,0,0.7)),url('{{ url_for('static', filename='images/tea_background.jpg') }}');background-size:cover;
+            background-position:center;max-width:1200px;height:800px;margin:50px auto;border-radius:10px;box-shadow:0 0 20px rgba(0,0,0,0.3);display:flex;flex-direction:column;align-items:center;}
+        .hero h1{font-family:"隶书",cursive;font-size:48px;color:#ffcc99;margin-top:100px;}
+        .container{max-width:350px;margin-top:80px;padding:25px;background-color:rgba(255,255,255,0.95);border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,0.2);}
+        .tab{display:flex;margin-bottom:20px;}
+        .tab button{flex:1;padding:10px;background-color:#f1f1f1;border:none;cursor:pointer;font-size:16px;}
+        .tab button.active{background-color:#4CAF50;color:white;}
+        .form-container{display:none;}
+        .form-container.active{display:block;}
+        input{width:calc(100% - 24px);padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:4px;}
+        button[type="submit"]{width:100%;padding:12px;background-color:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;font-size:16px;}
+        .error-message{color:red;margin:10px 0;text-align:center;}
+        .success-message{color:green;margin:10px 0;text-align:center;}
+        @media (max-width:768px){.hero{max-width:90%;height:550px;margin:20px auto;}.hero h1{font-size:36px;margin-top:80px;}.container{max-width:80%;padding:15px;margin-top:60px;}input{width:calc(100% - 20px);padding:10px;}}
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>欢迎进入茶叶嫩梢分级识别系统</h1>
+        <div class="container">
+            <div class="tab">
+                <button id="login-tab" class="active">登录</button>
+                <button id="register-tab">注册</button>
+            </div>
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+            <div class="success-message">{{ success }}</div>
+            {% endif %}
+            <div id="login-form-container" class="form-container active">
+                <h2>用户登录</h2>
+                <form method="post">
+                    <input type="hidden" name="action" value="login">
+                    <input type="text" name="username" placeholder="用户名" required>
+                    <input type="password" name="password" placeholder="密码" required>
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+            <div id="register-form-container" class="form-container">
+                <h2>用户注册</h2>
+                <form method="post">
+                    <input type="hidden" name="action" value="register">
+                    <input type="text" name="username" placeholder="用户名" required>
+                    <input type="password" name="password" placeholder="密码" required>
+                    <button type="submit">注册</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 表单切换
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-tab').classList.add('active');
+            document.getElementById('register-tab').classList.remove('active');
+            document.getElementById('login-form-container').classList.add('active');
+            document.getElementById('register-form-container').classList.remove('active');
+        });
+        document.getElementById('register-tab').addEventListener('click', function() {
+            document.getElementById('register-tab').classList.add('active');
+            document.getElementById('login-tab').classList.remove('active');
+            document.getElementById('register-form-container').classList.add('active');
+            document.getElementById('login-form-container').classList.remove('active');
+        });
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'register') {
+            document.getElementById('register-tab').click();
+        }
+    </script>
+</body>
+</html>

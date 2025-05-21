@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>使用记录</title>
+    <style>
+        .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,0.5);align-items:center;justify-content:center;}
+        .modal-content{position:relative;max-width:800px;max-height:90vh;text-align:center;}
+        .close{color:white;position:absolute;top:30px;right:40px;font-size:40px;font-weight:bold;cursor:pointer;padding:0 10px;}
+        .prev,.next{cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);color:white;font-size:30px;padding:10px 20px;background-color:rgba(0,0,0,0.7);border-radius:5px;transition:background-color 0.3s;}
+        .prev{left:40px;}
+        .next{right:40px;}
+        .prev:hover,.next:hover{background-color:rgba(0,0,0,0.9);}
+        .modal img{max-width:100%;height:auto;display:block;}
+        table{width:100%;border-collapse:collapse;margin-top:20px;word-wrap:normal;table-layout:auto;}
+        th,td{padding:12px;border:1px solid #e0e0e0;}
+        th:nth-child(5),td:nth-child(5){min-width:200px;max-width:250px;text-align:center;}
+        th{background-color:#f8f8f8;font-weight:bold;text-align:center;white-space:nowrap;min-width:80px;}
+        td{vertical-align:middle;}
+        td:first-child,td:nth-child(2),td:nth-child(3),td:nth-child(5){text-align:center;}
+        td:nth-child(4){text-align:left;padding-left:20px;}
+        .result-img{max-width:100%;height:auto;display:block;margin:0 auto;cursor:pointer;}
+        .delete-btn{width:80px;height:35px;font-size:14px;padding:6px 10px;margin-left:5px;}
+        body{font-family:"Microsoft YaHei",sans-serif;font-size:16px;font-weight:400;line-height:30px;background-color:#360;margin:0;padding:0;overflow-x:hidden;min-height:100vh;}
+        .main-container{max-width:1200px;margin:0 auto;padding:0 15px;min-height:100vh;display:flex;flex-direction:column;}
+        .logo{display:flex;justify-content:center;align-items:center;padding:20px 0;color:white;}
+        .导航{background-color:#330;margin:10px 0;border-radius:5px;}
+        .导航 ul{margin:0;padding:0;list-style:none;text-align:center;}
+        .导航 li{line-height:50px;display:inline-block;padding:0 30px;}
+        .导航 a{color:#FFFFFF;text-decoration:none;transition:color 0.3s;}
+        .导航 a:hover{color:#ffcc99;}
+        .liuyan{font-family:"宋体",serif;background-color:white;color:#900;padding:35px 25px 25px;margin:20px auto;width:90%;max-width:1000px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.3);border-radius:8px;max-height:650px;overflow-y:auto;}
+        .result-box{border:1px solid #ccc;width:90%;max-width:800px;margin:10px auto;overflow:hidden;height:450px;background-color:#f9f9f9;display:flex;justify-content:center;align-items:center;border-radius:5px;}
+        button{width:120px;height:45px;background-color:#900;border:none;color:white;margin:15px 6px;font-size:18px;font-family:"隶书",cursive;font-weight:bold;border-radius:5px;cursor:pointer;transition:background-color 0.3s;}
+        button:hover{background-color:#cc3300;transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+        @media (max-width:768px){.file-btn-group{flex-direction:column;gap:15px;}.all{width:95%;}.导航 li{padding:0 15px;}.result-box{height:300px;}}
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="logo">
+            <h1>茶叶嫩梢分级识别系统</h1>
+        </div>
+        <div class="导航">
+            <ul>
+                <li><a href="/">网站首页</a></li>
+                <li><a href="/shiqishibie">茶叶时期识别</a></li>
+                <li><a href="/zhongleishibie">茶叶种类识别</a></li>
+                <li><a href="/xingtaishibie">特定形态识别</a></li>
+                <li><a href="/usage_records">使用记录</a></li>
+                <li><a href="/logout">退出登录</a></li>
+            </ul>
+        </div>
+        <div class="liuyan">
+            <span style="color: #990033; font-family: '隶书', cursive; font-size: 24px; font-weight: bold;">使用记录</span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>识别时间</th>
+                                    <th>识别类型</th>
+                                    <th>识别结果</th>
+                                    <th>图片预览</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ record.upload_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>
+                                        {% if record.recognition_type == 'form' %}
+                                            {% if record.detail_type == 'single_bud' %}单芽
+                                            {% elif record.detail_type == 'one_bud_one_leaf' %}一芽一叶
+                                            {% elif record.detail_type == 'one_bud_two_leaves' %}一芽两叶
+                                            {% else %}未知形态{% endif %}
+                                        {% elif record.recognition_type == 'variety' %}
+                                            {% if record.detail_type == 'green_tea' %}绿茶
+                                            {% elif record.detail_type == 'red_tea' %}红茶
+                                            {% elif record.detail_type == 'white_tea' %}白茶
+                                            {% else %}未知种类{% endif %}
+                                        {% else %}未知类型{% endif %}
+                                    </td>
+                                    <td>{{ record.result }}</td>
+                                    <td>
+                                        <img src="{{ url_for('get_image', record_id=record.id) }}" class="result-img" onclick="openModal(this, {{ loop.index0 }})" alt="识别结果图片">
+                                    </td>
+                                    <td>
+                                        <button class="delete-btn" data-record-id="{{ record.id }}">删除</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            <div class="modal-content">
+                <img id="modal-img" src="">
+            </div>
+        </div>
+    <script>
+        let imageElements = [];
+        let currentIndex = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            imageElements = Array.from(document.querySelectorAll('.result-img'));
+            imageElements.forEach((img, index) => img.index = index);
+        });
+        function openModal(img, index) {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+            currentIndex = index;
+            document.getElementById('modal-img').src = img.src;
+        }
+        function plusSlides(n) {
+            currentIndex = (currentIndex + n + imageElements.length) % imageElements.length;
+            document.getElementById('modal-img').src = imageElements[currentIndex].src;
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const tr = this.closest('tr');
+                const recordIndex = tr.rowIndex - 1;
+                if (confirm('确认删除这条记录？')) {
+                    fetch(`/delete_record/${this.dataset.recordId}`, { method: 'POST' })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            tr.remove();
+                            imageElements.splice(recordIndex, 1);
+                            if (currentIndex >= imageElements.length) currentIndex = imageElements.length - 1 || 0;
+                        }
+                    })
+                    .catch(error => alert('删除失败'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
