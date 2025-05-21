@@ -45,7 +45,6 @@ class UsageRecord(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-
 # 定义预处理函数
 def preprocess_image(image_bytes):
     try:
